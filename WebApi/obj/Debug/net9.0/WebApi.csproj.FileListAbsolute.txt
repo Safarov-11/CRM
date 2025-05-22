@@ -40,3 +40,4 @@ C:\Users\admin\OneDrive\Desktop\C# 3month\WebAPI\class-20-05\WebApi\obj\Debug\ne
 C:\Users\admin\OneDrive\Desktop\C# 3month\WebAPI\class-20-05\WebApi\obj\Debug\net9.0\WebApi.pdb
 C:\Users\admin\OneDrive\Desktop\C# 3month\WebAPI\class-20-05\WebApi\obj\Debug\net9.0\WebApi.genruntimeconfig.cache
 C:\Users\admin\OneDrive\Desktop\C# 3month\WebAPI\class-20-05\WebApi\obj\Debug\net9.0\ref\WebApi.dll
+C:\Users\admin\OneDrive\Desktop\C# 3month\WebAPI\class-20-05\WebApi\obj\Debug\net9.0\WebApi.sourcelink.json

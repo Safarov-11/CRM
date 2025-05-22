@@ -14,18 +14,18 @@ public class StudentGroupService(DataContext context) : IStudentGroupService
         using (var connection = await context.GetDbConnectionAsync())
         {
             var cmd1 = @"select * from students where id = @id";
-            var res1 = await connection.QueryFirstOrDefaultAsync<Group>(cmd1, new { id = studenGroup.StudentId });
+            var res1 = await connection.QueryFirstOrDefaultAsync<Student>(cmd1, new { id = studenGroup.StudentId });
             if (res1 == null)
             {
                 return new Response<string>(null, "student not founded");
             }
-            var cmd2 = @"select * from grpu[s] where id = @id";
+            var cmd2 = @"select * from groups where id = @id";
             var res2 = await connection.QueryFirstOrDefaultAsync<Group>(cmd2, new { id = studenGroup.GroupId });
             if (res2 == null)
             {
                 return new Response<string>(null, "group not founded");
-            }           
-           
+            }
+
             var cmd = @"insert into studentGroups(studentId, groupId, status),
                         values(@studentId, @groupId, @status)";
             var res = await connection.ExecuteAsync(cmd, studenGroup);
@@ -41,12 +41,12 @@ public class StudentGroupService(DataContext context) : IStudentGroupService
         {
 
             var cmd1 = @"select * from students where id = @id";
-            var res1 = await connection.QueryFirstOrDefaultAsync<Group>(cmd1, new { id = studenGroup.StudentId });
+            var res1 = await connection.QueryFirstOrDefaultAsync<Student>(cmd1, new { id = studenGroup.StudentId });
             if (res1 == null)
             {
                 return new Response<string>(null, "student not founded");
             }
-            var cmd2 = @"select * from grpu[s] where id = @id";
+            var cmd2 = @"select * from groups where id = @id";
             var res2 = await connection.QueryFirstOrDefaultAsync<Group>(cmd2, new { id = studenGroup.GroupId });
             if (res2 == null)
             {
@@ -78,12 +78,12 @@ public class StudentGroupService(DataContext context) : IStudentGroupService
         using (var connection = await context.GetDbConnectionAsync())
         {
             var cmd1 = @"select * from students where id = @id";
-            var res1 = await connection.QueryFirstOrDefaultAsync<Group>(cmd1, new { id = studenGroup.StudentId });
+            var res1 = await connection.QueryFirstOrDefaultAsync<Student>(cmd1, new { id = studenGroup.StudentId });
             if (res1 == null)
             {
                 return new Response<string>(null, "student not founded");
             }
-            var cmd2 = @"select * from grpu[s] where id = @id";
+            var cmd2 = @"select * from groups where id = @id";
             var res2 = await connection.QueryFirstOrDefaultAsync<Group>(cmd2, new { id = studenGroup.GroupId });
             if (res2 == null)
             {
@@ -100,5 +100,6 @@ public class StudentGroupService(DataContext context) : IStudentGroupService
             : new Response<string>(null, "student's group successfully updated");
         }
     }
-
+    
+    
 }

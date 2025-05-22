@@ -1,13 +1,15 @@
 using DoMain.ApiResponse;
+using DoMain.DTOs;
 using DoMain.Entities;
 using Infrastructure.Interfaces;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class StudentController(IStudentService stServ) : ControllerBase
+public class StudentController(StudentService stServ) : ControllerBase
 {
     [HttpGet]
     public async Task<Response<List<Student>>> GetAllStudentsAsync()
@@ -19,6 +21,30 @@ public class StudentController(IStudentService stServ) : ControllerBase
     public async Task<Response<Student>> GetStudentByIdAsync(int studentId)
     {
         return await stServ.GetStudentByIdAsync(studentId);
+    }
+
+    [HttpGet("Get students with their groups")]
+    public async Task<Response<List<StudentWithGroup>>> GetStudentsWithGroupsAsync()
+    {
+        return await stServ.GetStudentsWithGroupsAsync();
+    }
+
+    [HttpGet("Get students without any group")]
+    public async Task<Response<List<Student>>> GetStudentsWithoutGroupsAsync()
+    {
+        return await stServ.GetStudentsWithoutGroupsAsync();
+    }
+
+    [HttpGet("Get students who are dropped")]
+    public async Task<Response<List<Student>>> GetDroppedOutStudentsAsync()
+    {
+        return await stServ.GetDroppedOutStudentsAsync();
+    }
+
+    [HttpGet("Get students who are graduated")]
+    public async Task<Response<List<Student>>> GetGraduatedStudentsAsync()
+    {
+        return await stServ.GetGraduatedStudentsAsync();
     }
 
     [HttpPost]

@@ -3,7 +3,9 @@ using Dapper;
 using DoMain.ApiResponse;
 using Infrastructure.Data;
 using Infrastructure.Interfaces;
-using DoMain.Entities; 
+using DoMain.Entities;
+using DoMain.DTOs;
+
 
 
 
@@ -16,7 +18,7 @@ public class GroupService(DataContext context) : IGroupService
     {
         using (var connection = await context.GetDbConnectionAsync())
         {
-            var cmd = @"insert into groups(groupName,courseId, mentorId, startDate, emdDate),
+            var cmd = @"insert into groups(groupName,courseId, mentorId, startDate, emdDate)
                         values(@groupName, @courseId, @mentorId, @startDate, @emdDate)";
             var res = await connection.ExecuteAsync(cmd, group);
             return res == null
@@ -96,5 +98,38 @@ public class GroupService(DataContext context) : IGroupService
             ? new Response<string>("Some thing goes wrong", HttpStatusCode.InternalServerError)
             : new Response<string>(null, "group successfully updated");
         }
+    }
+
+    public async Task<Response<List<GroupStudentCount>>> GetStudentsPerGroupAsync()
+    {
+        using (var connection = await context.GetDbConnectionAsync())
+        {
+            var cmd = @"select g.groupname, count(s.id) as studentsCount from studentgroups sg
+join groups g on g.id = sg.groupId
+join students s on s.id = sg.studentId
+group by g.groupname";
+
+            var res = await connection.QueryAsync<GroupStudentCount>(cmd);
+            return res == null
+            ? new Response<List<GroupStudentCount>>("something went wrong", HttpStatusCode.InternalServerError)
+            : new Response<List<GroupStudentCount>>(res.ToList(), "Success");
+        }
+    }
+    
+    public async Task<Response<List<Group>>> GetEmptyGroupsAsync()
+    {
+        using (var connection = await context.GetDbConnectionAsync())
+        {
+            var cmd = @"
+select g.* from groups g
+join studentgroups sg on sg.groupId = g.id
+where sg.studentId is null";
+
+            var res = await connection.QueryAsync<Group>(cmd);
+            return res == null
+            ? new Response<List<Group>>("something went wrong", HttpStatusCode.InternalServerError)
+            : new Response<List<Group>>(res.ToList(), "Success");
+        }
+
     }
 }

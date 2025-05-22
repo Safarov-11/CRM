@@ -1,6 +1,7 @@
 using System.Net;
 using Dapper;
 using DoMain.ApiResponse;
+using DoMain.DTOs;
 using DoMain.Entities;
 using Infrastructure.Data;
 using Infrastructure.Interfaces;
@@ -13,7 +14,7 @@ public class StudentService(DataContext context) : IStudentService
     {
         using (var connection = await context.GetDbConnectionAsync())
         {
-            var cmd = @"insert into students(FullName, Email, Phone, EnrollmentDate),
+            var cmd = @"insert into students(FullName, Email, Phone, EnrollmentDate)
                         values(@FullName, @Email, @Phone, @Specialization)";
             var res = await connection.ExecuteAsync(cmd, student);
             return res == null
@@ -91,6 +92,67 @@ public class StudentService(DataContext context) : IStudentService
             return res == null
             ? new Response<string>("Some thing goes wrong", HttpStatusCode.InternalServerError)
             : new Response<string>(null, "student successfully updated");
+        }
+    }
+
+    public async Task<Response<List<StudentWithGroup>>> GetStudentsWithGroupsAsync()
+    {
+        using (var connection = await context.GetDbConnectionAsync())
+        {
+            var cmd = @"select s.fullname, s.email,g.id, g.groupname from studentgroups sg
+join students s on s.id = sg.studentId 
+join groups g on g.id = sg.groupId 
+group by s.fullname, s.email,g.id, g.groupname";
+            var res = await connection.QueryAsync<StudentWithGroup>(cmd);
+
+            return res == null
+            ? new Response<List<StudentWithGroup>>("Some thing went wrong", HttpStatusCode.InternalServerError)
+            : new Response<List<StudentWithGroup>>(res.ToList(), "Success");
+        }
+    }
+
+    public async Task<Response<List<Student>>> GetStudentsWithoutGroupsAsync()
+    {
+        using (var connection = await context.GetDbConnectionAsync())
+        {
+            var cmd = @"select s.* from students s
+left join studentgroups sg on s.id = sg.studentId  
+where sg.groupId is null";
+            var res = await connection.QueryAsync<Student>(cmd);
+
+            return res == null
+            ? new Response<List<Student>>("Some thing went wrong", HttpStatusCode.InternalServerError)
+            : new Response<List<Student>>(res.ToList(), "Success");
+        }
+    }
+
+    public async Task<Response<List<Student>>> GetDroppedOutStudentsAsync()
+    {
+        using (var connection = await context.GetDbConnectionAsync())
+        {
+            var cmd = @"select s.* from students s 
+left join studentgroups sg on s.id = sg.studentId 
+where status = 3";
+            var res = await connection.QueryAsync<Student>(cmd);
+
+            return res == null
+            ? new Response<List<Student>>("Some thing went wrong", HttpStatusCode.InternalServerError)
+            : new Response<List<Student>>(res.ToList(), "Success");
+        }
+    }
+
+    public async Task<Response<List<Student>>> GetGraduatedStudentsAsync()
+    {
+        using (var connection = await context.GetDbConnectionAsync())
+        {
+            var cmd = @"select s.* from students s 
+left join studentgroups sg on s.id = sg.studentId 
+where status = 2";
+            var res = await connection.QueryAsync<Student>(cmd);
+
+            return res == null
+            ? new Response<List<Student>>("Some thing went wrong", HttpStatusCode.InternalServerError)
+            : new Response<List<Student>>(res.ToList(), "Success");
         }
     }
 }

@@ -1,6 +1,7 @@
 using System.Net;
 using Dapper;
 using DoMain.ApiResponse;
+using DoMain.DTOs;
 using DoMain.Entities;
 using Infrastructure.Data;
 using Infrastructure.Interfaces;
@@ -13,7 +14,7 @@ public class MentorService(DataContext context) : IMentorService
     {
         using (var connection = await context.GetDbConnectionAsync())
         {
-            var cmd = @"insert into mentors(FullName, Email, Phone, Specialization),
+            var cmd = @"insert into mentors(FullName, Email, Phone, Specialization)
                         values(@FullName, @Email, @Phone, @Specialization)";
             var res = await connection.ExecuteAsync(cmd, mentor);
             return res == null
@@ -73,6 +74,7 @@ public class MentorService(DataContext context) : IMentorService
         throw new NotImplementedException();
     }
 
+
     public async Task<Response<string>> UpdateMentorAsync(Mentor mentor)
     {
         using (var connection = await context.GetDbConnectionAsync())
@@ -94,4 +96,41 @@ public class MentorService(DataContext context) : IMentorService
             : new Response<string>(null, "mentor successfully updated");
         }
     }
+
+    public async Task<Response<List<Mentor>>> GetMentorsWithMultipleCoursesAsync()
+    {
+        using (var connection = await context.GetDbConnectionAsync())
+        {
+            var cmd = @"select m.* from groups g
+join mentors m on m.id = g.mentorId
+join courses c on c.id = g.courseId
+group by m.id
+having count(c.id) > 1";
+
+            var res = await connection.QueryAsync<Mentor>(cmd);
+            return res == null
+            ? new Response<List<Mentor>>("Some thing went wrong", HttpStatusCode.InternalServerError)
+            : new Response<List<Mentor>>(res.ToList(), "Success");
+        }
+    }
+
+    public async Task<Response<MentorWithMaxCourses>> GetMentorWithMostStudentsAsync()
+    {
+        using (var connection = await context.GetDbConnectionAsync())
+        {
+            var cmd = @"select m.fullname, m.email, m.specialization, count(s.id) as studentsCount from  studentgroups sg
+join groups g on sg.groupId = g.id
+join mentors m on m.id = g.mentorId
+join students s on s.id = sg.studentId
+group by m.id
+order by count(s.id) desc
+limit 1";
+
+            var res = await connection.QuerySingleOrDefaultAsync<MentorWithMaxCourses>(cmd);
+            return res == null
+            ? new Response<MentorWithMaxCourses>("Some thing went wrong", HttpStatusCode.InternalServerError)
+            : new Response<MentorWithMaxCourses>(res, "Success");
+        }
+    }
+
 }

@@ -1,13 +1,15 @@
 using DoMain.ApiResponse;
+using DoMain.DTOs;
 using DoMain.Entities;
 using Infrastructure.Interfaces;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class MentorController(IMentorService mServ) : ControllerBase
+public class MentorController(MentorService mServ) : ControllerBase
 {
     [HttpGet]
     public async Task<Response<List<Mentor>>> GetAllMentorsAsync()
@@ -19,6 +21,12 @@ public class MentorController(IMentorService mServ) : ControllerBase
     public async Task<Response<Mentor>> GetMentorByIdAsync(int mentorId)
     {
         return await mServ.GetMentorByIdAsync(mentorId);
+    }
+
+    [HttpGet("Get Mentor with most students")]
+    public async Task<Response<Mentor>> GetMentorWithMostStudents()
+    {
+        return await mServ.GetMentorWithMostStudents();
     }
 
     [HttpPost]

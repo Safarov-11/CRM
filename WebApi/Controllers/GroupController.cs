@@ -2,6 +2,7 @@ using DoMain.ApiResponse;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using DoMain.Entities;
+using DoMain.DTOs;
 
 namespace WebApi.Controllers;
 
@@ -19,6 +20,18 @@ public class GroupController(GroupService grServ) : ControllerBase
     public async Task<Response<Group>> GetGroupByIdAsync(int groupId)
     {
         return await grServ.GetGroupByIdAsync(groupId);
+    }
+
+    [HttpGet("Get student per group")]
+    public async Task<Response<List<GroupStudentCount>>> GetStudentsPerGroupAsync()
+    {
+        return await grServ.GetStudentsPerGroupAsync();
+    }
+
+    [HttpGet("Get groups without students")]
+    public async Task<Response<List<Group>>> GetEmptyGroupsAsync()
+    {
+        return await grServ.GetEmptyGroupsAsync();
     }
 
     [HttpPost]

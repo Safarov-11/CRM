@@ -1,13 +1,14 @@
 using DoMain.ApiResponse;
 using DoMain.Entities;
 using Infrastructure.Interfaces;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class StudentGroupController(IStudentGroupService stGrServ) : ControllerBase
+public class StudentGroupController(StudentGroupService stGrServ) : ControllerBase
 {
     [HttpGet]
     public async Task<Response<List<StudenGroup>>> GetStudenGroupsAsync()
