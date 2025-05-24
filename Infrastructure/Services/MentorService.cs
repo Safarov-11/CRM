@@ -114,7 +114,7 @@ having count(c.id) > 1";
         }
     }
 
-    public async Task<Response<MentorWithMaxCourses>> GetMentorWithMostStudentsAsync()
+    public async Task<Response<MentorWithMostStudents>> GetMentorWithMostStudentsAsync()
     {
         using (var connection = await context.GetDbConnectionAsync())
         {
@@ -126,10 +126,10 @@ group by m.id
 order by count(s.id) desc
 limit 1";
 
-            var res = await connection.QuerySingleOrDefaultAsync<MentorWithMaxCourses>(cmd);
+            var res = await connection.QuerySingleOrDefaultAsync<MentorWithMostStudents>(cmd);
             return res == null
-            ? new Response<MentorWithMaxCourses>("Some thing went wrong", HttpStatusCode.InternalServerError)
-            : new Response<MentorWithMaxCourses>(res, "Success");
+            ? new Response<MentorWithMostStudents>("Some thing went wrong", HttpStatusCode.InternalServerError)
+            : new Response<MentorWithMostStudents>(res, "Success");
         }
     }
 

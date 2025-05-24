@@ -43,6 +43,12 @@
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
+          "dependencies": {
+            "Microsoft.AspNetCore.Http": {
+              "target": "Package",
+              "version": "[2.3.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -110,6 +116,10 @@
             "Dapper": {
               "target": "Package",
               "version": "[2.1.66, )"
+            },
+            "Microsoft.AspNetCore.Hosting.Abstractions": {
+              "target": "Package",
+              "version": "[2.3.0, )"
             },
             "Npgsql": {
               "target": "Package",

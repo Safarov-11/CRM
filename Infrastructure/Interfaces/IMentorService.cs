@@ -11,6 +11,7 @@ public interface IMentorService
     Task<Response<Mentor>> GetMentorByIdAsync(int mentorId);
     Task<Response<string>> UpdateMentorAsync(Mentor mentor);
     Task<Response<string>> DeleteMentorAsync(int mentorId);
-    Task<Response<Mentor>> GetMentorWithMostStudentsAsync();
-    Task<Response<List<MentorWithMaxCourses>>> GetMentorsWithMultipleCoursesAsync();
+    Task<Response<MentorWithMostStudents>> GetMentorWithMostStudentsAsync();
+    Task<Response<List<Mentor>>> GetMentorsWithMultipleCoursesAsync();
+    
 }

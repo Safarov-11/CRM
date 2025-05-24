@@ -8,18 +8,45 @@ using Infrastructure.Interfaces;
 
 namespace Infrastructure.Services;
 
-public class StudentService(DataContext context) : IStudentService
+public class StudentService(DataContext context, IWebHostEnviroment webHostEnviroment ) : IStudentService
 {
     public async Task<Response<string>> AddStudentAsync(Student student)
     {
+            var wwwRootPath = webHostEnviroment.WevRootPath;
+            var folderPath = Path.Combine(wwwRootPath, "StudentsImages");
+            var fileName = car.Photo.fileNamee;
+
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+        
+            var fullPath = Path.Combine(folderPath, fileName);
         using (var connection = await context.GetDbConnectionAsync())
         {
-            var cmd = @"insert into students(FullName, Email, Phone, EnrollmentDate)
-                        values(@FullName, @Email, @Phone, @Specialization)";
-            var res = await connection.ExecuteAsync(cmd, student);
+
+            await using (var connection = await context.GetConnectionAsync())
+            {
+            await using (var stream = File.Create(fullPath))
+            {
+                await student.Photo.CopyToAsync(stream);
+            }
+
+
+            var cmd = @"insert into students(FullName, Email, Phone, EnrollmentDate, photo)
+                        values(@FullName, @Email, @Phone, @Specialization, @photo)";
+            var anonymObject = new {
+                FullName = student.FullName,
+                Email = student.Email,
+                Phone = student.phone,
+                EnrollmentDate = student.EnrollmentDate,
+                Photo = student.Photo.fileName,
+            };
+            var res = await connection.ExecuteAsync(cmd, anonymObject);
             return res == null
             ? new Response<string>("Some thing goes wrong", HttpStatusCode.InternalServerError)
             : new Response<string>(null, "Successfully added student");
+            }
         }
     }
 
@@ -31,7 +58,7 @@ public class StudentService(DataContext context) : IStudentService
             var res1 = await connection.QueryFirstOrDefaultAsync<Student>(cmd1, new { id = studentId });
             if (res1 == null)
             {
-                return new Response<string>(null, "student not founded");
+                return new Response<string>("student not founded", HttpStatusCode.n);
             }
 
             var cmd = @"delete from students where id = @id";
@@ -42,34 +69,34 @@ public class StudentService(DataContext context) : IStudentService
         }
     }
 
-    public async Task<Response<List<Student>>> GetAllStudentsAsync()
+    public async Task<Response<List<StudentwWithImage>>> GetAllStudentsAsync()
     {
         using (var connection = await context.GetDbConnectionAsync())
         {
             var cmd = @"select * from students";
-            var res = await connection.QueryAsync<Student>(cmd);
+            var res = await connection.QueryAsync<StudentWithImage>(cmd);
             return res == null
-            ? new Response<List<Student>>("Some thing goes wrong", HttpStatusCode.InternalServerError)
-            : new Response<List<Student>>(res.ToList(), "Success");
+            ? new Response<List<StudentWithImage>>("Some thing goes wrong", HttpStatusCode.InternalServerError)
+            : new Response<List<StudentWithImage>>(res.ToList(), "Success");
         }
     }
 
-    public async Task<Response<Student>> GetStudentByIdAsync(int studentId)
+    public async Task<Response<StudentWithImage>> GetStudentByIdAsync(int studentId)
     {
         using (var connection = await context.GetDbConnectionAsync())
         {
             var cmd1 = @"select * from students where id = @id";
-            var res1 = await connection.QueryFirstOrDefaultAsync<Student>(cmd1, new { id = studentId });
+            var res1 = await connection.QueryFirstOrDefaultAsync<StudentWithImage>(cmd1, new { id = studentId });
             if (res1 == null)
             {
-                return new Response<Student>(null, "student not founded");
+                return new Response<StudentWithImage>(null, "student not founded");
             }
 
             var cmd = @"select * from students where id = @id";
             var res = await connection.QueryFirstOrDefaultAsync<Student>(cmd, new { id = studentId });
             return res == null
-            ? new Response<Student>("Some thing goes wrong", HttpStatusCode.InternalServerError)
-            : new Response<Student>(res, "Success");
+            ? new Response<StudentWithImage>("Some thing goes wrong", HttpStatusCode.InternalServerError)
+            : new Response<StudentWithImage>(res, "Success");
         }
     }
 

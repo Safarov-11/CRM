@@ -1,4 +1,5 @@
 using Infrastructure.Data;
+using Infrastructure.Interfaces;
 using Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,12 +10,13 @@ builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddScoped<DataContext, DataContext>();
-builder.Services.AddScoped<StudentService, StudentService>();
-builder.Services.AddScoped<MentorService, MentorService>();
-builder.Services.AddScoped<StudentGroupService, StudentGroupService>();
-builder.Services.AddScoped<CourseService, CourseService>();
-builder.Services.AddScoped<GroupService, GroupService>();
-builder.Services.AddScoped<StatisticsService, StatisticsService>();
+builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<IMentorService, MentorService>();
+builder.Services.AddScoped<IStudentGroupService, StudentGroupService>();
+builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<IGroupService, GroupService>();
+builder.Services.AddScoped<IStatisticsService, StatisticsService>();
+builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 
 
 var app = builder.Build();
@@ -29,5 +31,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 app.MapControllers();
+app.UseStaticFiles();
 
 app.Run();

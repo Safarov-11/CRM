@@ -24,9 +24,15 @@ public class MentorController(MentorService mServ) : ControllerBase
     }
 
     [HttpGet("Get Mentor with most students")]
-    public async Task<Response<Mentor>> GetMentorWithMostStudents()
+    public async Task<Response<MentorWithMostStudents>> GetMentorWithMostStudents()
     {
-        return await mServ.GetMentorWithMostStudents();
+        return await mServ.GetMentorWithMostStudentsAsync();
+    }
+
+    [HttpGet("Get Mentor with multiple courses")]
+    public async Task<Response<List<Mentor>>> GetMentorsWithMultipleCoursesAsync()
+    {
+        return await mServ.GetMentorsWithMultipleCoursesAsync();
     }
 
     [HttpPost]

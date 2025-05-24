@@ -1,6 +1,6 @@
 namespace DoMain.DTOs;
 
-public class MentorWithMaxCourses
+public class MentorWithMostStudents
 {
     public string FullName { get; set; }
     public string Email { get; set; }
