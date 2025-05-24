@@ -5,6 +5,8 @@ using DoMain.DTOs;
 using DoMain.Entities;
 using Infrastructure.Data;
 using Infrastructure.Interfaces;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Infrastructure.Services;
 
@@ -14,7 +16,7 @@ public class StudentService(DataContext context, IWebHostEnviroment webHostEnvir
     {
             var wwwRootPath = webHostEnviroment.WevRootPath;
             var folderPath = Path.Combine(wwwRootPath, "StudentsImages");
-            var fileName = car.Photo.fileNamee;
+            var fileName = student.Photo.fileNamee;
 
             if (!Directory.Exists(folderPath))
             {

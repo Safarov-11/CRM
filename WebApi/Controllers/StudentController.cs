@@ -12,13 +12,13 @@ namespace WebApi.Controllers;
 public class StudentController(StudentService stServ) : ControllerBase
 {
     [HttpGet]
-    public async Task<Response<List<Student>>> GetAllStudentsAsync()
+    public async Task<Response<List<StudentwWithImage>>> GetAllStudentsAsync()
     {
         return await stServ.GetAllStudentsAsync();
     }
 
     [HttpGet("{studentid:int}")]
-    public async Task<Response<Student>> GetStudentByIdAsync(int studentId)
+    public async Task<Response<StudentwWithImage>> GetStudentByIdAsync(int studentId)
     {
         return await stServ.GetStudentByIdAsync(studentId);
     }
@@ -48,7 +48,7 @@ public class StudentController(StudentService stServ) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<Response<string>> CreateCorseAsync(Student student)
+    public async Task<Response<string>> CreateCorseAsync([from from]Student student )
     {
         return await stServ.AddStudentAsync(student);
     }
